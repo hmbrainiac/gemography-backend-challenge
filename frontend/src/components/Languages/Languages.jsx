@@ -2,20 +2,24 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"
 
 import LanguageItem from "./LanguageItem";
+import WaitingElement from "./WaitingElement";
 
 
 function Languages() {
   const languagesEndpoint = "http://localhost:8000"
   const [languages, setLanguages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     axios.get(languagesEndpoint)
       .then(response => {
         setLanguages(response.data);
+        setIsLoading(false);
       })
       .catch(error => {
         console.log(error);
-      })
+      });
   }, []);
 
   return (
@@ -27,9 +31,15 @@ function Languages() {
           </h3>
         </div>
       </div>
-      <ul>
-        {languages.map((item) => <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)}
-      </ul>
+      {
+        isLoading ? (
+          <WaitingElement />
+        ) : (
+            <ul>
+              {languages.map((item) => <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)}
+            </ul>
+          )
+      }
     </div>
   );
 }
