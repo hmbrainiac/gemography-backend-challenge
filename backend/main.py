@@ -1,4 +1,3 @@
-import uvicorn
 import requests
 from datetime import date, timedelta
 from fastapi import FastAPI
@@ -14,7 +13,9 @@ app.add_middleware(
     allow_headers=["*"],
 ),
 
-GITHUB_REPOS_API = 'https://api.github.com/search/repositories?q=created:>{}&sort=stars&order=desc'
+GITHUB_REPOS_API = (
+    "https://api.github.com/search/repositories?q=created:>{}&sort=stars&order=desc"
+)
 DEFAULT_NBR_DAYS = 30
 
 
@@ -42,32 +43,23 @@ async def get_languages(nbr_days: int = DEFAULT_NBR_DAYS):
         # retievie all repos from github response
         json_repos = response.json().get("items", [])
         for repo in json_repos:
-            repo_language = repo.get('language')
+            repo_language = repo.get("language")
             if repo_language is not None:
 
                 # get language from dict if it's already assigned else create new dict
-                language = languages.get(
-                    repo_language, {'language': repo_language}
-                )
+                language = languages.get(repo_language, {"language": repo_language})
 
                 # increase number of utilisation
-                language['nbr_used'] = language.get('nbr_used', 0) + 1
+                language["nbr_used"] = language.get("nbr_used", 0) + 1
 
                 # add repo's url to the language's repos
-                language['repos'] = language.get(
-                    'repos', []
-                ) + [repo.get('git_url')]
+                language["repos"] = language.get("repos", []) + [repo.get("git_url")]
 
                 languages[repo_language] = language
 
         # Sort languages by number of utilisation
         languages = sorted(
-            languages.values(), key=lambda x: x.get('nbr_used'),
-            reverse=True,
+            languages.values(), key=lambda x: x.get("nbr_used"), reverse=True,
         )
 
     return languages
-
-
-if __name__ == "__main__":
-    uvicorn.run(app)
