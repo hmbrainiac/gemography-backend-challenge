@@ -16,7 +16,7 @@ function Languages() {
       .catch(error => {
         console.log(error);
       })
-  });
+  }, []);
 
   return (
     <div className="w-full mx-auto mt-20 bg-white shadow overflow-hidden sm:rounded-md">
