@@ -28,7 +28,7 @@ function Languages() {
         </div>
       </div>
       <ul>
-        {languages.map((item) => <LanguageItem language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)}
+        {languages.map((item) => <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)}
       </ul>
     </div>
   );

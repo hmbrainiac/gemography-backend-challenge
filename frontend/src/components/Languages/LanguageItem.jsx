@@ -3,7 +3,7 @@ import Repos from "./Repos"
 
 function LanguageItem({ language, nbr_used, repos }) {
   return (
-    <li key="{language}" className="border-t border-gray-200">
+    <li className="border-t border-gray-200">
       <div className="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out">
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
