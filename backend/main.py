@@ -1,20 +1,25 @@
 import uvicorn
 import requests
+import operator
 from datetime import date, timedelta
 from fastapi import FastAPI
 
 app = FastAPI()
 
 GITHUB_REPOS_API = 'https://api.github.com/search/repositories?q=created:>{}&sort=stars&order=desc'
+DEFAULT_NBR_DAYS = 30
 
 
 @app.get("/")
 @app.get("/{nbr_days}")
-def root(nbr_days: int = 30):
+def root(nbr_days: int = DEFAULT_NBR_DAYS):
     """
-        Returns the most used languages in trending the repos
+        Returns list of the most used languages in trending repos
         in a number of days given
     """
+
+    # if days number not between 0 and 100 replaced by default number
+    nbr_days = nbr_days if 0 < nbr_days <= 100 else DEFAULT_NBR_DAYS
 
     # get a start date to retrieve repos
     # based on a giver number of days
@@ -32,24 +37,27 @@ def root(nbr_days: int = 30):
             repo_language = repo.get('language')
             if repo_language is not None:
 
-                # get language from dict if is already assigned else create new dict
-                language = languages.get(repo_language, {})
+                # get language from dict if it's already assigned else create new dict
+                language = languages.get(
+                    repo_language, {'language': repo_language}
+                )
 
                 # increase number of utilisation
                 language['nbr_used'] = language.get('nbr_used', 0) + 1
 
-                # add repo's url to the language repos
-                language_repos = language.get('repos', [])
-                language_repos.append(repo.get('git_url'))
-                language['repos'] = language_repos
+                # add repo's url to the language's repos
+                language['repos'] = language.get(
+                    'repos', []
+                ) + [repo.get('git_url')]
 
                 languages[repo_language] = language
 
-    return {
-        'nbr_days': nbr_days,
-        'date': str(start_date),
-        'languages': languages
-    }
+    # Sort languages by number of utilisation
+    languages_sorted = sorted(
+        languages.values(), key=lambda x: x.get('nbr_used'),
+        reverse=True,
+    )
+    return languages_sorted
 
 
 if __name__ == "__main__":
