@@ -1,10 +1,18 @@
 import uvicorn
 import requests
-import operator
 from datetime import date, timedelta
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+),
 
 GITHUB_REPOS_API = 'https://api.github.com/search/repositories?q=created:>{}&sort=stars&order=desc'
 DEFAULT_NBR_DAYS = 30
@@ -28,8 +36,8 @@ def root(nbr_days: int = DEFAULT_NBR_DAYS):
     # response from Github endpoint
     response = requests.get(GITHUB_REPOS_API.format(start_date))
 
+    languages = {}
     if response.ok:
-        languages = {}
 
         # retievie all repos from github response
         json_repos = response.json().get("items", [])
@@ -52,12 +60,13 @@ def root(nbr_days: int = DEFAULT_NBR_DAYS):
 
                 languages[repo_language] = language
 
-    # Sort languages by number of utilisation
-    languages_sorted = sorted(
-        languages.values(), key=lambda x: x.get('nbr_used'),
-        reverse=True,
-    )
-    return languages_sorted
+        # Sort languages by number of utilisation
+        languages = sorted(
+            languages.values(), key=lambda x: x.get('nbr_used'),
+            reverse=True,
+        )
+
+    return languages
 
 
 if __name__ == "__main__":
