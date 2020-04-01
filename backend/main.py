@@ -20,7 +20,7 @@ DEFAULT_NBR_DAYS = 30
 
 @app.get("/")
 @app.get("/{nbr_days}")
-async def root(nbr_days: int = DEFAULT_NBR_DAYS):
+async def get_languages(nbr_days: int = DEFAULT_NBR_DAYS):
     """
         Returns list of the most used languages in trending repos
         in a number of days given
