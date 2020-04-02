@@ -19,8 +19,8 @@ GITHUB_REPOS_API = (
 DEFAULT_NBR_DAYS = 30
 
 
-@app.get("/")
-@app.get("/{nbr_days}")
+@app.get("/api/get_languages")
+@app.get("/api/get_languages/{nbr_days}")
 async def get_languages(nbr_days: int = DEFAULT_NBR_DAYS):
     """
         Returns list of the most used languages in trending repos

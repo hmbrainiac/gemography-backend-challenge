@@ -7,7 +7,7 @@ import ErrorElement from "./ErrorElement";
 
 
 function Languages() {
-  const languagesEndpoint = "http://localhost:8000"
+  const languagesEndpoint = "http://localhost:8000/api/get_languages"
   const [languages, setLanguages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
@@ -26,9 +26,7 @@ function Languages() {
       });
   }, []);
 
-  let element = languages.map((item) =>
-    <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />
-  )
+  let element = languages.map((item) => <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)
   if (isLoading) {
     element = <WaitingElement />
   } else if (isFailed) {
