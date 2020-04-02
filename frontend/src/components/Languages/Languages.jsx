@@ -3,24 +3,37 @@ import axios from "axios"
 
 import LanguageItem from "./LanguageItem";
 import WaitingElement from "./WaitingElement";
+import ErrorElement from "./ErrorElement";
 
 
 function Languages() {
   const languagesEndpoint = "http://localhost:8000"
   const [languages, setLanguages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
+    setIsFailed(false);
     axios.get(languagesEndpoint)
       .then(response => {
         setLanguages(response.data);
         setIsLoading(false);
       })
       .catch(error => {
-        console.log(error);
+        setIsLoading(false);
+        setIsFailed(true);
       });
   }, []);
+
+  let element = languages.map((item) =>
+    <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />
+  )
+  if (isLoading) {
+    element = <WaitingElement />
+  } else if (isFailed) {
+    element = <ErrorElement />
+  }
 
   return (
     <div className="w-full mx-auto mt-20 bg-white shadow overflow-hidden sm:rounded-md">
@@ -31,15 +44,9 @@ function Languages() {
           </h3>
         </div>
       </div>
-      {
-        isLoading ? (
-          <WaitingElement />
-        ) : (
-            <ul>
-              {languages.map((item) => <LanguageItem key={item.language} language={item.language} nbr_used={item.nbr_used} repos={item.repos} />)}
-            </ul>
-          )
-      }
+      <ul>
+        {element}
+      </ul>
     </div>
   );
 }
