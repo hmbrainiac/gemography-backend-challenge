@@ -1,6 +1,6 @@
 import requests
 from datetime import date, timedelta
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -35,7 +35,10 @@ async def get_languages(nbr_days: int = DEFAULT_NBR_DAYS):
     start_date = str(date.today() - timedelta(days=nbr_days))
 
     # response from Github endpoint
-    response = requests.get(GITHUB_REPOS_API.format(start_date))
+    try:
+        response = requests.get(GITHUB_REPOS_API.format(start_date))
+    except requests.exceptions.RequestException:
+        raise HTTPException(status_code=404, detail="Cannot reach GitHub API")
 
     languages = {}
     if response.ok:
@@ -47,13 +50,15 @@ async def get_languages(nbr_days: int = DEFAULT_NBR_DAYS):
             if repo_language is not None:
 
                 # get language from dict if it's already assigned else create new dict
-                language = languages.get(repo_language, {"language": repo_language})
+                language = languages.get(
+                    repo_language, {"language": repo_language})
 
                 # increase number of utilisation
                 language["nbr_used"] = language.get("nbr_used", 0) + 1
 
                 # add repo's url to the language's repos
-                language["repos"] = language.get("repos", []) + [repo.get("git_url")]
+                language["repos"] = language.get(
+                    "repos", []) + [repo.get("git_url")]
 
                 languages[repo_language] = language
 
