@@ -1,0 +1,9 @@
+Dockerfile
+.dockerignore
+.gitignore
+README.md
+__pycache__
+*.py[cod]
+*$py.class
+build
+node_modules

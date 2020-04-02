@@ -1,4 +1,6 @@
 fastapi==0.53.2
 uvicorn==0.11.3
+aiofiles==0.4.0
+Jinja2==2.11.1
 requests==2.23.0
 pytest==5.4.1
