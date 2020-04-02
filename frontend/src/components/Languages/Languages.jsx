@@ -7,7 +7,7 @@ import ErrorElement from "./ErrorElement";
 
 
 function Languages() {
-  const languagesEndpoint = "http://localhost:8000/api/get_languages"
+  const languagesEndpoint = "/api/get_languages"
   const [languages, setLanguages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
