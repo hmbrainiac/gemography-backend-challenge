@@ -1,10 +1,15 @@
 import requests
 from datetime import date, timedelta
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+templates = Jinja2Templates(directory="../frontend/build")
+app.mount("/static", StaticFiles(
+    directory="../frontend/build/static"
+), name="static")
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -17,6 +22,11 @@ GITHUB_REPOS_API = (
     "https://api.github.com/search/repositories?q=created:>{}&sort=stars&order=desc"
 )
 DEFAULT_NBR_DAYS = 30
+
+
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/api/get_languages")
