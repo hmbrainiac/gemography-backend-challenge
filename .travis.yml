@@ -8,4 +8,4 @@ services:
 before_script: pip install docker-compose
 
 script:
-  - docker-compose run backend sh -c "pytest tests.py"
+  - docker-compose run app sh -c "cd backend && pytest tests.py"
